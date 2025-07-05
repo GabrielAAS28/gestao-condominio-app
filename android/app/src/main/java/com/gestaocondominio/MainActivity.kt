@@ -1,5 +1,6 @@
 package com.gestaocondominio
 
+import android.os.Bundle; // Adicione este import se ele não existir
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -19,4 +20,10 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  // Adicione este método inteiro.
+  // É necessário para o react-native-gesture-handler e o reanimated funcionarem corretamente.
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null)
+  }
 }

@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   async function signIn(credentials) {
     try {
-      console.log('Dados enviados para a API:', credentials);
+      //console.log('Dados enviados para a API:', credentials);
 
       const response = await api.post('/api/auth/login', credentials);
 

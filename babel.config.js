@@ -12,7 +12,9 @@ module.exports = {
         },
       },
     ],
+    // Adicionando o plugin do Reanimated. Ele DEVE ser o último da lista.
+    'react-native-reanimated/plugin',
   ],
 };
-// Este arquivo configura o Babel para o projeto React Native.
-// Ele define presets e plugins necessários para compilar o código. 
+// Este arquivo é a configuração do Babel para o React Native.
+// Ele define presets e plugins que ajudam na transpilação do código JavaScript moderno para uma versão compatível com o React Native.

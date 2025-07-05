@@ -11,7 +11,7 @@ import {
   Label
 } from './styles';
 
-export function CriarComunicado({ navigation }) {
+export function CriarComunicacao({ navigation }) {
   const [assunto, setAssunto] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

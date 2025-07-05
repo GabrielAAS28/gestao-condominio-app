@@ -24,7 +24,7 @@ export function SignIn() {
     try {
       // CORREÇÃO: O nome do campo foi alterado de 'password' para 'senha'
       // para corresponder ao que a API espera.
-      await signIn({ email, senha: password });
+      await signIn({ email,password });
       
       // Se o login for bem-sucedido, o roteador principal irá
       // automaticamente navegar para as AppRoutes.
@@ -60,4 +60,4 @@ export function SignIn() {
 }
 // O componente SignIn agora está configurado para lidar com o login do usuário
 // utilizando o contexto de autenticação. Ele exibe um alerta em caso de erro
-// e navega para as rotas do aplicativo se o login for bem-sucedido.
+// e navega para as rotas do aplicativo se o login for bem-sucedido.- 
