@@ -22,12 +22,9 @@ export function SignIn() {
     }
 
     try {
-      // CORREÇÃO: O nome do campo foi alterado de 'password' para 'senha'
-      // para corresponder ao que a API espera.
-      await signIn({ email,password });
-      
-      // Se o login for bem-sucedido, o roteador principal irá
-      // automaticamente navegar para as AppRoutes.
+      await signIn({ email, senha: password });
+      // Se o login for bem-sucedido, o usuário será redirecionado
+      // para as rotas do aplicativo através do contexto de autenticação.
     } catch (error) {
       Alert.alert('Erro no Login', error.message);
     }

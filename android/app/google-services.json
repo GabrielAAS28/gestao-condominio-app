@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656825160687",
+    "project_id": "gestaocondominio-2b4eb",
+    "storage_bucket": "gestaocondominio-2b4eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656825160687:android:63d170ae4f16333df3dc1a",
+        "android_client_info": {
+          "package_name": "com.gestaocondominio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAr8-KgLKWl4KQ6PyoAclgZK7-KQr5VB0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

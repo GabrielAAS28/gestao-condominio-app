@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
+// Importando a nova função de update do serviço
+import { updatePessoa } from '../services/cadastroService';
 
 const AuthContext = createContext({});
 
@@ -19,26 +21,36 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     }
-
     loadStorageData();
   }, []);
 
   async function signIn(credentials) {
     try {
-      //console.log('Dados enviados para a API:', credentials);
-
       const response = await api.post('/api/auth/login', credentials);
-
       const { token, user: userData } = response.data;
-
       await AsyncStorage.setItem('@GestaoCondominio:user', JSON.stringify(userData));
       await AsyncStorage.setItem('@GestaoCondominio:token', token);
-
       api.defaults.headers.Authorization = `Bearer ${token}`;
       setUser(userData);
     } catch (error) {
       console.error('Erro no signIn:', error.response?.data || error.message);
-      throw new Error(error.response?.data?.message || 'Não foi possível fazer o login. Verifique suas credenciais.');
+      throw new Error(error.response?.data?.message || 'Não foi possível fazer o login.');
+    }
+  }
+
+  // Nova função para atualizar os dados do utilizador
+  async function updateUserData(updatedData) {
+    try {
+      // Chama a API para atualizar os dados da pessoa
+      const response = await updatePessoa(user.pesCod, updatedData);
+      
+      // Atualiza o estado global e o AsyncStorage com os novos dados
+      const newUser = response.data;
+      setUser(newUser);
+      await AsyncStorage.setItem('@GestaoCondominio:user', JSON.stringify(newUser));
+    } catch (error) {
+      console.error('Erro ao atualizar dados do utilizador:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || 'Não foi possível atualizar os dados.');
     }
   }
 
@@ -48,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ signed: !!user, user, loading, signIn, signOut, updateUserData }}>
       {children}
     </AuthContext.Provider>
   );

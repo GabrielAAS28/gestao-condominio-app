@@ -7,7 +7,7 @@ import api from './api';
  * Busca na API a lista de comunicados visíveis para o usuário logado.
  */
 export const getComunicacoes = () => {
-  return api.get('/api/comunicacoes');
+  return api.get('/comunicacoes');
 };
 
 /**
@@ -25,7 +25,7 @@ export const getComunicadoById = (id) => {
  * @param {object} data - O objeto com os dados do comunicado.
  */
 export const createComunicado = (data) => {
-  return api.post('/api/comunicacoes', data);
+  return api.post('/comunicacoes', data);
 };
 
 /**

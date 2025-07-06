@@ -1,75 +1,51 @@
 import api from './api';
 
-// Este serviço agrupa as funções de criação (POST) das principais
-// entidades do sistema, conforme definido no manual da API.
+// Este serviço agrupa as funções de criação (POST) e atualização (PUT)
+// das principais entidades do sistema.
 
 /**
- * POST /api/pessoas
+ * POST /pessoas
  * Cadastra uma nova pessoa física ou jurídica no sistema.
  * @param {object} dadosPessoa - Ex: { pesNome, pesCpfCnpj, pesTipo, pesEmail, pesSenhaLogin }
  */
 export const cadastrarPessoa = (dadosPessoa) => {
-  return api.post('/api/pessoas', dadosPessoa);
+  // CORREÇÃO: Removido o '/api' do início do caminho.
+  return api.post('/pessoas', dadosPessoa);
 };
 
 /**
- * POST /api/condominios
- * Cadastra um novo condomínio.
- * @param {object} dadosCondominio - Ex: { conNome, conLogradouro, conNumero, ... }
+ * PUT /pessoas/{id}
+ * Atualiza os dados de uma pessoa existente.
+ * @param {number} id - O ID da pessoa a ser atualizada.
+ * @param {object} dadosPessoa - Os dados a serem atualizados.
  */
+export const updatePessoa = (id, dadosPessoa) => {
+  // CORREÇÃO: Removido o '/api' do início do caminho.
+  return api.put(`/pessoas/${id}`, dadosPessoa);
+};
+
+
+
 export const cadastrarCondominio = (dadosCondominio) => {
-  return api.post('/api/condominios', dadosCondominio);
+  return api.post('/condominios', dadosCondominio);
 };
 
-/**
- * POST /api/unidades
- * Cadastra uma nova unidade (apartamento, sala) em um condomínio.
- * @param {object} dadosUnidade - Ex: { uniNumero, uniStatusOcupacao, condominio: { conCod } }
- */
 export const cadastrarUnidade = (dadosUnidade) => {
-  return api.post('/api/unidades', dadosUnidade);
+  return api.post('/unidades', dadosUnidade);
 };
 
-/**
- * POST /api/moradores
- * Associa uma pessoa a uma unidade, definindo-a como morador.
- * @param {object} dadosVinculo - Ex: { pessoa: { pesCod }, unidade: { uniCod }, morTipoRelacionamento }
- */
 export const vincularMorador = (dadosVinculo) => {
-  return api.post('/api/moradores', dadosVinculo);
+  return api.post('/moradores', dadosVinculo);
 };
 
-/**
- * POST /api/usuarios/condominios
- * Concede um papel (ex: SINDICO) a um usuário dentro de um condomínio específico.
- * @param {object} dadosPapel - Ex: { pessoa: { pesCod }, condominio: { conCod }, uscPapel }
- */
 export const concederPapelCondominio = (dadosPapel) => {
-  return api.post('/api/usuarios/condominios', dadosPapel);
+  return api.post('/usuarios/condominios', dadosPapel);
 };
 
-/**
- * POST /api/areascomuns
- * Cadastra uma nova área comum (piscina, salão de festas) em um condomínio.
- * @param {object} dadosAreaComum - Os dados da nova área comum.
- */
 export const cadastrarAreaComum = (dadosAreaComum) => {
-  return api.post('/api/areascomuns', dadosAreaComum);
+  return api.post('/areascomuns', dadosAreaComum);
 };
 
-/**
- * POST /api/manutencoes
- * Abre um novo chamado de manutenção para uma área comum ou unidade.
- * @param {object} dadosManutencao - Os dados do chamado de manutenção.
- */
 export const abrirChamadoManutencao = (dadosManutencao) => {
-  return api.post('/api/manutencoes', dadosManutencao);
+  return api.post('/manutencoes', dadosManutencao);
 };
-/**
- * POST /api/avisos
- * Cria um novo aviso para os moradores do condomínio.
- * @param {object} dadosAviso - Os dados do aviso a ser criado.
- */
-export const criarAviso = (dadosAviso) => {
-  return api.post('/api/avisos', dadosAviso);
-}       

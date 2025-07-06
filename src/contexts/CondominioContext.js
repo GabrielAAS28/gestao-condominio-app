@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
-// Importando todas as funções do nosso serviço de comunicação
 import { getComunicacoes, createComunicado, deleteComunicado } from '../services/comunicacaoService';
+import { notificationService } from '../services/NotificationService';
 import { Alert } from 'react-native';
 
 const CondominioContext = createContext({});
@@ -8,53 +8,64 @@ const CondominioContext = createContext({});
 export const CondominioProvider = ({ children }) => {
   const [comunicados, setComunicados] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Novo estado para armazenar erros da API
+  const [error, setError] = useState(null);
 
-  // Função para buscar os comunicados, agora com tratamento de erro aprimorado
   const fetchComunicados = useCallback(async () => {
     setLoading(true);
-    setError(null); // Limpa erros anteriores
+    setError(null);
     try {
       const response = await getComunicacoes();
       setComunicados(response.data);
     } catch (err) {
+      console.error("--- ERRO DETALHADO AO BUSCAR COMUNICADOS ---");
+      if (err.response) {
+        // O servidor respondeu com um status de erro (4xx ou 5xx)
+        console.error("Data:", err.response.data);
+        console.error("Status:", err.response.status);
+        console.error("Headers:", err.response.headers);
+      } else if (err.request) {
+        // A requisição foi feita mas não houve resposta
+        console.error("Request:", err.request);
+      } else {
+        // Algo aconteceu ao configurar a requisição
+        console.error('Error', err.message);
+      }
+      console.error("-----------------------------------------");
+
       const errorMessage = err.response?.data?.message || "Não foi possível carregar os comunicados.";
       setError(errorMessage);
-      Alert.alert('Erro', errorMessage);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Nova função para adicionar um comunicado
   const addComunicado = async (novoComunicado) => {
     try {
       const response = await createComunicado(novoComunicado);
-      // Adiciona o novo comunicado retornado pela API no início da lista
       setComunicados(prev => [response.data, ...prev]);
+      notificationService.localNotification(
+        'Novo Comunicado!',
+        novoComunicado.comAssunto
+      );
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Não foi possível criar o comunicado.";
-      Alert.alert('Erro', errorMessage);
-      throw err; // Lança o erro para a tela que chamou a função poder tratar também
-    }
-  };
-
-  // Nova função para remover um comunicado
-  const removeComunicado = async (id) => {
-    try {
-      await deleteComunicado(id);
-      // Remove o comunicado da lista localmente para atualizar a UI instantaneamente
-      setComunicados(prev => prev.filter(c => c.comCod !== id));
-    } catch (err) {
-      const errorMessage = err.response?.data?.message || "Não foi possível remover o comunicado.";
-      Alert.alert('Erro', errorMessage);
+      Alert.alert('Atenção', errorMessage);
       throw err;
     }
   };
 
+  const removeComunicado = async (id) => {
+    try {
+      await deleteComunicado(id);
+      setComunicados(prev => prev.filter(c => c.comCod !== id));
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Não foi possível remover o comunicado.";
+      Alert.alert('Atenção', errorMessage);
+      throw err;
+    }
+  };
 
   return (
-    // Disponibilizando os novos estados e funções para o resto do app
     <CondominioContext.Provider 
       value={{ 
         comunicados, 
@@ -70,8 +81,11 @@ export const CondominioProvider = ({ children }) => {
   );
 };
 
-// Hook customizado para facilitar o uso
 export function useCondominio() {
   const context = useContext(CondominioContext);
   return context;
 }
+// O hook useCondominio permite que outros componentes acessem o contexto do condomínio,
+// facilitando a obtenção de comunicados, o carregamento de dados e a manipulação
+// de comunicados (adição e remoção) sem a necessidade de passar props manualmente
+// por toda a árvore de componentes.
