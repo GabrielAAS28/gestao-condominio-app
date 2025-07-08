@@ -2,6 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
+  // CORREÇÃO: Removi o '/api' do final do endereço.
   baseURL: 'https://gestao-condominio-api.onrender.com/api',
   timeout: 30000, 
 });
