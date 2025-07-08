@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   async function signIn(credentials) {
     try {
-      const response = await api.post('/api/auth/login', credentials);
+      const response = await api.post('/auth/login', credentials);
       const { token, user: userData } = response.data;
       await AsyncStorage.setItem('@GestaoCondominio:user', JSON.stringify(userData));
       await AsyncStorage.setItem('@GestaoCondominio:token', token);
@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Nova função para atualizar os dados do utilizador
   async function updateUserData(updatedData) {
     try {
       // Chama a API para atualizar os dados da pessoa

@@ -15,7 +15,8 @@ import {
   ButtonText,
   EditButton,
   EditButtonText,
-  PlaceholderText
+  PlaceholderText,
+  CondominioCard
 } from './styles';
 
 const formatCpfCnpj = (value) => {
@@ -27,7 +28,9 @@ const formatCpfCnpj = (value) => {
   return value;
 };
 
-export default function MeusDados() {
+// CORREÇÃO: Usando 'export function' em vez de 'export default'
+// para manter a consistência com o resto do projeto e corrigir o erro.
+export function MeusDados() {
   const { user, updateUserData } = useAuth();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -134,7 +137,7 @@ export default function MeusDados() {
           <SectionTitle>Dados do Condomínio</SectionTitle>
           {user?.condominios && user.condominios.length > 0 ? (
             user.condominios.map((condo) => (
-              <View key={condo.conCod} style={styles.condominioCard}>
+              <CondominioCard key={condo.conCod}>
                 <InfoRow>
                   <InfoLabel>Nome do Condomínio</InfoLabel>
                   <InfoValue>{condo.conNome}</InfoValue>
@@ -143,7 +146,7 @@ export default function MeusDados() {
                   <InfoLabel>Endereço</InfoLabel>
                   <InfoValue>{`${condo.conLogradouro}, ${condo.conNumero}`}</InfoValue>
                 </InfoRow>
-              </View>
+              </CondominioCard>
             ))
           ) : (
             <PlaceholderText>
@@ -158,13 +161,3 @@ export default function MeusDados() {
     </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  condominioCard: {
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-  }
-});

@@ -23,8 +23,6 @@ export function SignIn() {
 
     try {
       await signIn({ email, senha: password });
-      // Se o login for bem-sucedido, o usuário será redirecionado
-      // para as rotas do aplicativo através do contexto de autenticação.
     } catch (error) {
       Alert.alert('Erro no Login', error.message);
     }

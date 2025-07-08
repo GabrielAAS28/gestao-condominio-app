@@ -18,6 +18,8 @@ import { Cobrancas } from '../screens/Cobrancas';
 import { Reservas } from '../screens/Reservas';
 import { Perfil } from '../screens/Perfil';
 import { MeusDados } from '../screens/MeusDados';
+import { AlterarSenha } from '../screens/AlterarSenha'; 
+
 
 function AlterarSenhaScreen() {
     return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Tela de Alterar Senha</Text></View>
@@ -47,7 +49,7 @@ function PerfilStack() {
     >
       <Stack.Screen name="PerfilInitial" component={Perfil} options={{ headerShown: false }} />
       <Stack.Screen name="MeusDados" component={MeusDados} options={{ title: 'Meus Dados' }} />
-      <Stack.Screen name="AlterarSenha" component={AlterarSenhaScreen} options={{ title: 'Alterar Senha' }} />
+       <Stack.Screen name="AlterarSenha" component={AlterarSenha} options={{ title: 'Alterar Senha' }} />
     </Stack.Navigator>
   );
 }

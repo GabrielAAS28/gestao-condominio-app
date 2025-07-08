@@ -16,7 +16,7 @@ export const getComunicacoes = () => {
  * @param {number} id - O ID do comunicado.
  */
 export const getComunicadoById = (id) => {
-  return api.get(`/api/comunicacoes/${id}`);
+  return api.get(`/comunicacoes/${id}`);
 };
 
 /**
@@ -35,7 +35,7 @@ export const createComunicado = (data) => {
  * @param {object} data - O objeto com os campos a serem atualizados.
  */
 export const updateComunicado = (id, data) => {
-  return api.put(`/api/comunicacoes/${id}`, data);
+  return api.put(`/comunicacoes/${id}`, data);
 };
 
 /**
@@ -44,7 +44,7 @@ export const updateComunicado = (id, data) => {
  * @param {number} id - O ID do comunicado a ser deletado.
  */
 export const deleteComunicado = (id) => {
-  return api.delete(`/api/comunicacoes/${id}`);
+  return api.delete(`/comunicacoes/${id}`);
 };
 
 /**
@@ -53,7 +53,7 @@ export const deleteComunicado = (id) => {
  * @param {number} id - O ID do comunicado a ser enviado.
  */
 export const enviarComunicado = (id) => {
-  return api.post(`/api/comunicacoes/${id}/enviar`);
+  return api.post(`/comunicacoes/${id}/enviar`);
 };
 
 /**
@@ -62,5 +62,5 @@ export const enviarComunicado = (id) => {
  * @param {number} id - O ID do comunicado.
  */
 export const marcarComunicadoComoLido = (id) => {
-  return api.post(`/api/comunicacoes/${id}/marcar-lido`);
+  return api.post(`/comunicacoes/${id}/marcar-lido`);
 };
