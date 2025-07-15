@@ -22,7 +22,7 @@ export function SignIn() {
     }
 
     try {
-      await signIn({ email, senha: password });
+      await signIn({ email, senha: String(password) });
     } catch (error) {
       Alert.alert('Erro no Login', error.message);
     }

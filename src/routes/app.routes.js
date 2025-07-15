@@ -20,10 +20,8 @@ import { Perfil } from '../screens/Perfil';
 import { MeusDados } from '../screens/MeusDados';
 import { AlterarSenha } from '../screens/AlterarSenha'; 
 
+import { DetalheComunicado } from '../screens/DetalheComunicado';
 
-function AlterarSenhaScreen() {
-    return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Tela de Alterar Senha</Text></View>
-}
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,6 +32,17 @@ function HomeStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeInitial" component={Home} />
       <Stack.Screen name="CriarComunicado" component={CriarComunicado} />
+      {/* ADICIONE ESTA LINHA ABAIXO */}
+      <Stack.Screen 
+        name="DetalheComunicado" 
+        component={DetalheComunicado} 
+        options={{ 
+          headerShown: true, 
+          title: 'Detalhes do Comunicado',
+          headerStyle: { backgroundColor: '#f4f5f7' }, 
+          headerTintColor: '#333',
+        }} 
+      />
     </Stack.Navigator>
   );
 }
@@ -49,7 +58,8 @@ function PerfilStack() {
     >
       <Stack.Screen name="PerfilInitial" component={Perfil} options={{ headerShown: false }} />
       <Stack.Screen name="MeusDados" component={MeusDados} options={{ title: 'Meus Dados' }} />
-       <Stack.Screen name="AlterarSenha" component={AlterarSenha} options={{ title: 'Alterar Senha' }} />
+      {/* Esta linha já está correta, usando o componente importado */} 
+      <Stack.Screen name="AlterarSenha" component={AlterarSenha} options={{ title: 'Alterar Senha' }} />
     </Stack.Navigator>
   );
 }
@@ -93,6 +103,9 @@ function MoradorTabNavigator() {
 function GestaoScreen() {
     return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>Painel do Gestor (Em construção)</Text></View>
 }
+
+
+
 
 export function AppRoutes() {
   const theme = useTheme();

@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { useCondominio } from '../../contexts/CondominioContext';
-// CORREÇÃO: Importando o useAuth para aceder aos dados do utilizador
-import { useAuth } from '../../contexts/AuthContext';
 
 // Importando o ícone
 import Feather from 'react-native-vector-icons/Feather';
@@ -14,10 +12,12 @@ export function Home({ navigation }) {
     fetchComunicados();
   }, [fetchComunicados]);
 
+  const handleComunicadoPress = (comunicado) => {
+    navigation.navigate('DetalheComunicado', { comunicado: comunicado });
+  };
+
   return (
     <View style={styles.container}>
-      {/* O cabeçalho principal agora é gerido pelo DrawerNavigator */}
-      
       <FlatList
         data={comunicados}
         keyExtractor={(item) => String(item.comCod)}
@@ -36,10 +36,13 @@ export function Home({ navigation }) {
           </View>
         )}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.comAssunto}</Text>
-            <Text style={styles.cardSender}>Por: {item.remetente.pesNome}</Text>
-          </View>
+          <TouchableOpacity onPress={() => handleComunicadoPress(item)}>
+            <View style={styles.card}>
+              <Text style={styles.cardTitle}>{item.comAssunto}</Text>
+              
+              <Text style={styles.cardSender}>Por: {item.remetente?.pesNome || 'Sistema'}</Text>
+            </View>
+          </TouchableOpacity>
         )}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={fetchComunicados} />
@@ -57,24 +60,17 @@ export function Home({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     backgroundColor: '#F5F5F5',
   },
-  // Estilo para o texto de boas-vindas
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
   title: { 
     fontSize: 22, 
     fontWeight: 'bold', 
     margin: 16,
-    marginTop: 8, // Reduzindo a margem superior
+    marginTop: 8,
     color: '#212121',
   },
   emptyContainer: {

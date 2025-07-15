@@ -13,17 +13,3 @@ export const alterarSenha = (data) => {
   return api.put('/users/password', data);
 };
 
-// Exemplo de como a função deve ser chamada no seu componente:
-/*
-  const dadosParaApi = {
-    currentPassword: 'a_senha_que_o_usuario_digitou',
-    newPassword: 'a_nova_senha_digitada'
-  };
-
-  try {
-    await alterarSenha(dadosParaApi);
-    // Sucesso!
-  } catch (error) {
-    // Tratar erro
-  }
-*/

@@ -1,70 +1,92 @@
 import React, { useState } from 'react';
-import { Alert, ActivityIndicator, View } from 'react-native';
-import { useCondominio } from '../../contexts/CondominioContext';
-import { useAuth } from '../../contexts/AuthContext';
-import { Container, Input, Button, ButtonText, Label } from './styles';
+import { Alert, Switch, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-export function CriarComunicado({ navigation }) {
+// Importe o seu hook do contexto para adicionar o comunicado
+import { useCondominio } from '../../contexts/CondominioContext';
+
+// Importe os seus componentes de estilo
+import {
+  Container,
+  Label,
+  Input,
+  InputMensagem,
+  Button,
+  ButtonText,
+  SwitchContainer,
+  SwitchLabel,
+} from './styles';
+
+export function CriarComunicado() {
+  const navigation = useNavigation();
+  const { addComunicado, loading } = useCondominio();
+
   const [assunto, setAssunto] = useState('');
   const [mensagem, setMensagem] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addComunicado } = useCondominio();
-  const { user } = useAuth();
+  const [isGlobal, setIsGlobal] = useState(false); // Estado para o Switch
 
-  async function handleAddComunicado() {
+  const handleSaveComunicado = async () => {
     if (!assunto.trim() || !mensagem.trim()) {
       Alert.alert('Atenção', 'Por favor, preencha o assunto e a mensagem.');
       return;
     }
-    setIsSubmitting(true);
+
+    const novoComunicado = {
+      comAssunto: assunto,
+      comMensagem: mensagem,
+      comGlobal: isGlobal, 
+    };
+
     try {
-      const condominioId = user?.condominios?.[0]?.conCod;
-
-      if (!condominioId) {
-        Alert.alert('Erro', 'Não foi possível identificar o seu condomínio. Verifique se você está associado a um condomínio.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      const novoComunicado = {
-        comAssunto: assunto,
-        comMensagem: mensagem,
-        condominio: {
-          conCod: condominioId
-        },
-      };
-
       await addComunicado(novoComunicado);
       
-      Alert.alert('Sucesso!', 'Comunicado criado.');
-      navigation.goBack();
+
+      Alert.alert(
+        'Sucesso!', 
+        'O seu comunicado foi criado.',
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
+
     } catch (error) {
-      Alert.alert('Erro ao Criar Comunicado', error.message);
-    } finally {
-      setIsSubmitting(false);
+      console.error('Falha ao salvar comunicado na tela:', error);
     }
-  }
+  };
 
   return (
     <Container>
       <Label>Assunto</Label>
       <Input
-        placeholder="Ex: Manutenção da Piscina"
         value={assunto}
         onChangeText={setAssunto}
-        returnKeyType="next"
+        placeholder="Ex: Manutenção da Piscina"
       />
+
       <Label>Mensagem</Label>
-      <Input
-        placeholder="Detalhes do comunicado..."
+      <InputMensagem
         value={mensagem}
         onChangeText={setMensagem}
+        placeholder="Descreva o comunicado aqui..."
         multiline
-        numberOfLines={6}
-        style={{ height: 120, textAlignVertical: 'top' }}
       />
-      <Button onPress={handleAddComunicado} disabled={isSubmitting}>
-        {isSubmitting ? <ActivityIndicator color="#FFF" /> : <ButtonText>Salvar Comunicado</ButtonText>}
+
+      {/* Componente Switch para "Enviar para Todos" */}
+      <SwitchContainer>
+        <SwitchLabel>Enviar para todos os moradores?</SwitchLabel>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={isGlobal ? '#3182ce' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setIsGlobal(previousState => !previousState)}
+          value={isGlobal}
+        />
+      </SwitchContainer>
+
+      <Button onPress={handleSaveComunicado} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <ButtonText>Salvar Comunicado</ButtonText>
+        )}
       </Button>
     </Container>
   );

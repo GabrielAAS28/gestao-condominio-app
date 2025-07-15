@@ -3,12 +3,13 @@ import api from './api';
 // --- Funções para Áreas Comuns ---
 
 /**
- * GET /area-comum
+ * GET /api/area-comum
  * Busca a lista de todas as áreas comuns disponíveis para reserva.
  */
 export const getCommonAreas = async () => {
   try {
-    const response = await api.get('/area-comum/listar');
+    // CORREÇÃO: Removido o '/api' porque já está na baseURL
+    const response = await api.get('/area-comum');
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar áreas comuns:", error);
@@ -17,7 +18,7 @@ export const getCommonAreas = async () => {
 };
 
 /**
- * GET /area-comum/{id}
+ * GET /api/area-comum/{id}
  * Busca os detalhes de uma área comum específica pelo seu ID.
  * @param {string} id - O ID da área comum.
  */
@@ -35,12 +36,12 @@ export const getCommonAreaById = async (id) => {
 // --- Funções para Reservas (Morador) ---
 
 /**
- * GET /reserva/area-comum/{commonAreaId}
+ * GET /api/reservas/area-comum/{commonAreaId}
  * Busca todas as reservas existentes para uma área comum específica.
  */
 export const getReservationsByArea = async (commonAreaId) => {
   try {
-    const response = await api.get(`/reserva/area-comum/${commonAreaId}`);
+    const response = await api.get(`/reservas/area-comum/${commonAreaId}`);
     return response.data;
   } catch (error) {
     console.error(`Erro ao buscar reservas para a área ${commonAreaId}:`, error);
@@ -49,12 +50,12 @@ export const getReservationsByArea = async (commonAreaId) => {
 };
 
 /**
- * GET /reserva/minhas-reservas
+ * GET /api/reservas/minhas-reservas
  * Busca a lista de todas as reservas feitas pelo utilizador logado.
  */
 export const getMyReservations = async () => {
   try {
-    const response = await api.get('/reserva/minhas-reservas');
+    const response = await api.get('/reservas/minhas-reservas');
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar as minhas reservas:", error);
@@ -63,13 +64,12 @@ export const getMyReservations = async () => {
 };
 
 /**
- * POST /reserva
+ * POST /api/reservas
  * Cria uma nova reserva para uma área comum.
- * @param {object} reservationData - Os dados da reserva.
  */
 export const createReservation = async (reservationData) => {
   try {
-    const response = await api.post('/reserva', reservationData);
+    const response = await api.post('/reservas', reservationData);
     return response.data;
   } catch (error) {
     console.error("Erro ao criar reserva:", error);
@@ -78,13 +78,12 @@ export const createReservation = async (reservationData) => {
 };
 
 /**
- * DELETE /reserva/{id}
+ * DELETE /api/reservas/{id}
  * Cancela uma reserva específica.
- * @param {string} reservationId - O ID da reserva a ser cancelada.
  */
 export const cancelReservation = async (reservationId) => {
   try {
-    const response = await api.delete(`/reserva/${reservationId}`);
+    const response = await api.delete(`/reservas/${reservationId}`);
     return response.data;
   } catch (error) {
     console.error(`Erro ao cancelar a reserva ${reservationId}:`, error);
@@ -92,31 +91,27 @@ export const cancelReservation = async (reservationId) => {
   }
 };
 
-
-// --- Funções para Gestão de Reservas (Síndico/Admin) ---
-
 /**
- * GET /reserva
+ * GET /api/reservas
  * Busca todas as reservas do condomínio (requer permissão de gestor).
  */
 export const getAllReservations = async () => {
-  try {
-    const response = await api.get('/reserva');
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar todas as reservas:", error);
-    throw error;
-  }
-};
+    try {
+      const response = await api.get('/reservas');
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao buscar todas as reservas:", error);
+      throw error;
+    }
+  };
 
 /**
- * PATCH /reserva/{id}/aprovar
+ * PATCH /api/reservas/{id}/aprovar
  * Aprova uma reserva pendente.
- * @param {string} reservationId - O ID da reserva a ser aprovada.
  */
 export const approveReservation = async (reservationId) => {
   try {
-    const response = await api.patch(`/reserva/${reservationId}/aprovar`);
+    const response = await api.patch(`/reservas/${reservationId}/aprovar`);
     return response.data;
   } catch (error) {
     console.error(`Erro ao aprovar a reserva ${reservationId}:`, error);
@@ -125,13 +120,12 @@ export const approveReservation = async (reservationId) => {
 };
 
 /**
- * PATCH /reserva/{id}/reprovar
+ * PATCH /api/reservas/{id}/reprovar
  * Rejeita uma reserva pendente.
- * @param {string} reservationId - O ID da reserva a ser rejeitada.
  */
 export const rejectReservation = async (reservationId) => {
   try {
-    const response = await api.patch(`/reserva/${reservationId}/reprovar`);
+    const response = await api.patch(`/reservas/${reservationId}/reprovar`);
     return response.data;
   } catch (error) {
     console.error(`Erro ao rejeitar a reserva ${reservationId}:`, error);
