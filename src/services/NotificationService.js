@@ -8,7 +8,6 @@ class NotificationService {
   configure = () => {
     PushNotification.configure({
       // O token recebido aqui pode ser enviado para o seu backend para
-      // que você possa enviar notificações push direcionadas no futuro.
       onRegister: function (token) {
      
         console.log('Dispositivo registado para notificações.');
