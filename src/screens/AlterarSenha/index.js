@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, ActivityIndicator, StatusBar, Text, View } from 'react-native';
 
-// Importe a função do seu serviço de autenticação
+
 import { alterarSenha } from '../../services/authService';
 
-// Importe seus componentes estilizados do arquivo de estilos
+
 import { 
   Container, 
   Label, 
@@ -13,7 +13,7 @@ import {
   ButtonText,
   ValidationContainer,
   ValidationText
-} from './styles'; // Adicionei ValidationContainer e ValidationText ao styles
+} from './styles';
 
 /**
  * Valida a força de uma senha com base em critérios específicos.
