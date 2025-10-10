@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Icon from 'react-native-vector-icons/Feather';
 
-// Importe os seus componentes de estilo
+
 import {
   Container,
   Header,
