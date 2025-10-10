@@ -32,7 +32,7 @@ function HomeStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeInitial" component={Home} />
       <Stack.Screen name="CriarComunicado" component={CriarComunicado} />
-      {/* ADICIONE ESTA LINHA ABAIXO */}
+      
       <Stack.Screen 
         name="DetalheComunicado" 
         component={DetalheComunicado} 
@@ -58,7 +58,7 @@ function PerfilStack() {
     >
       <Stack.Screen name="PerfilInitial" component={Perfil} options={{ headerShown: false }} />
       <Stack.Screen name="MeusDados" component={MeusDados} options={{ title: 'Meus Dados' }} />
-      {/* Esta linha já está correta, usando o componente importado */} 
+  
       <Stack.Screen name="AlterarSenha" component={AlterarSenha} options={{ title: 'Alterar Senha' }} />
     </Stack.Navigator>
   );
