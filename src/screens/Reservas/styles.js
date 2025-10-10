@@ -12,9 +12,6 @@ export const LoadingContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
 `;
 
-// --- CORREÇÃO AQUI ---
-// As propriedades de sombra foram movidas para o método .attrs()
-// para serem aplicadas como props, e não como estilos CSS.
 export const Card = styled.View.attrs({
   shadowColor: '#000',
   shadowOffset: {
