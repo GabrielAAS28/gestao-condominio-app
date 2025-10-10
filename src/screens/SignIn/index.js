@@ -53,6 +53,3 @@ export function SignIn() {
     </Container>
   );
 }
-// O componente SignIn agora está configurado para lidar com o login do usuário
-// utilizando o contexto de autenticação. Ele exibe um alerta em caso de erro
-// e navega para as rotas do aplicativo se o login for bem-sucedido.- 
