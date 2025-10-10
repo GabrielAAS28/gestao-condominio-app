@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { useCondominio } from '../../contexts/CondominioContext';
 
-// Importando o ícone
+
 import Feather from 'react-native-vector-icons/Feather';
 
 export function Home({ navigation }) {
