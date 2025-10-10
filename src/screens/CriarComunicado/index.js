@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Alert, Switch, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-// Importe o seu hook do contexto para adicionar o comunicado
+
 import { useCondominio } from '../../contexts/CondominioContext';
 
-// Importe os seus componentes de estilo
+
 import {
   Container,
   Label,
