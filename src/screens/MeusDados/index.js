@@ -28,8 +28,7 @@ const formatCpfCnpj = (value) => {
   return value;
 };
 
-// CORREÇÃO: Usando 'export function' em vez de 'export default'
-// para manter a consistência com o resto do projeto e corrigir o erro.
+
 export function MeusDados() {
   const { user, updateUserData } = useAuth();
   
