@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
-// Importe o serviço que busca os dados da API
+
 import { getCommonAreas } from '../../services/reservaServices';
 
-// Importe os seus componentes de estilo
+
 import { 
   Container, 
   Card, 
