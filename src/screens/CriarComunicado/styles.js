@@ -20,7 +20,7 @@ export const Label = styled.Text`
 
 export const Input = styled.TextInput.attrs(props => ({
   placeholderTextColor: props.theme.colors.text_secondary,
-  textAlignVertical: 'top', // Adicionado aqui
+  textAlignVertical: 'top', 
 }))`
   width: 100%;
   height: 50px;
