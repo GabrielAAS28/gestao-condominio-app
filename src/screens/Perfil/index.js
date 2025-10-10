@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// CORREÇÃO: Adicionando a importação do 'View' que estava em falta.
 import { Alert, PermissionsAndroid, Platform, Image, View } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import Feather from 'react-native-vector-icons/Feather';
