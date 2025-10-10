@@ -20,7 +20,6 @@ export const cadastrarPessoa = (dadosPessoa) => {
  * @param {object} dadosPessoa - Os dados a serem atualizados.
  */
 export const updatePessoa = (id, dadosPessoa) => {
-  // CORREÇÃO: Removido o '/api' do início do caminho.
   return api.put(`/pessoas/${id}`, dadosPessoa);
 };
 
