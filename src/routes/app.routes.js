@@ -13,8 +13,10 @@ import { Home } from '../screens/Home';
 import { CriarComunicado } from '../screens/CriarComunicado';
 import { DetalheComunicado } from '../screens/DetalheComunicado';
 import { Cobrancas } from '../screens/Cobrancas';
+import { PagarCobranca } from '../screens/PagarCobranca';
 import { Reservas } from '../screens/Reservas';
 import { FazerReserva } from '../screens/FazerReserva';
+import { CriarReserva } from '../screens/CriarReserva';
 import { Perfil } from '../screens/Perfil';
 import { MeusDados } from '../screens/MeusDados';
 import { AlterarSenha } from '../screens/AlterarSenha';
@@ -49,16 +51,44 @@ function HomeStack() {
 
 function ReservasStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true, headerStyle: { backgroundColor: '#fff' }, headerTintColor: '#333' }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
       <Stack.Screen name="ReservasList" component={Reservas} options={{ headerShown: false }} />
-      <Stack.Screen name="FazerReserva" component={FazerReserva} options={{ title: 'Nova Reserva' }} />
+      <Stack.Screen name="CriarReserva" component={CriarReserva} options={{ title: 'Nova Reserva' }} />
+      <Stack.Screen name="FazerReserva" component={FazerReserva} options={{ title: 'Disponibilidade' }} />
+    </Stack.Navigator>
+  );
+}
+
+function CobrancasStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
+      <Stack.Screen name="CobrancasList" component={Cobrancas} options={{ headerShown: false }} />
+      <Stack.Screen name="PagarCobranca" component={PagarCobranca} options={{ title: 'Pagamento' }} />
     </Stack.Navigator>
   );
 }
 
 function OcorrenciasStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true, headerStyle: { backgroundColor: '#fff' }, headerTintColor: '#333' }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
       <Stack.Screen name="OcorrenciasList" component={Ocorrencias} options={{ headerShown: false }} />
       <Stack.Screen
         name="DetalheOcorrencia"
@@ -71,7 +101,13 @@ function OcorrenciasStack() {
 
 function PerfilStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true, headerStyle: { backgroundColor: '#fff' }, headerTintColor: '#333' }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
       <Stack.Screen name="PerfilInitial" component={Perfil} options={{ headerShown: false }} />
       <Stack.Screen name="MeusDados" component={MeusDados} options={{ title: 'Meus Dados' }} />
       <Stack.Screen name="AlterarSenha" component={AlterarSenha} options={{ title: 'Alterar Senha' }} />
@@ -97,6 +133,11 @@ function MoradorTabNavigator() {
         options={{ tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} /> }}
       />
       <Tab.Screen
+        name="Cobranças"
+        component={CobrancasStack}
+        options={{ tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }}
+      />
+      <Tab.Screen
         name="Reservas"
         component={ReservasStack}
         options={{ tabBarIcon: ({ color, size }) => <Feather name="calendar" size={size} color={color} /> }}
@@ -105,11 +146,6 @@ function MoradorTabNavigator() {
         name="Ocorrências"
         component={OcorrenciasStack}
         options={{ tabBarIcon: ({ color, size }) => <Feather name="alert-octagon" size={size} color={color} /> }}
-      />
-      <Tab.Screen
-        name="Cobranças"
-        component={Cobrancas}
-        options={{ tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }}
       />
       <Tab.Screen
         name="Perfil"
@@ -140,7 +176,6 @@ export function AppRoutes() {
   const theme = useTheme();
   const { user } = useAuth();
 
-  // Determina se o usuário tem algum papel de gestão (síndico/admin/funcionário/porteiro)
   const isGestor =
     user?.isGlobalAdmin ||
     user?.pesIsGlobalAdmin ||

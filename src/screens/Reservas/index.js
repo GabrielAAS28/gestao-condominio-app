@@ -50,7 +50,7 @@ export function Reservas() {
   const loadData = useCallback(async () => {
     try {
       const condominioIds = getCondominioIds();
-      const condominioId = condominioIds[0]; // simples: primeiro condomínio
+      const condominioId = condominioIds[0];
       const [areasRes, reservasRes] = await Promise.all([
         listarAreasComuns(condominioId ? { condominioId, ativa: true } : { ativa: true }),
         user?.pesCod ? minhasReservas(user.pesCod) : Promise.resolve({ data: [] }),
