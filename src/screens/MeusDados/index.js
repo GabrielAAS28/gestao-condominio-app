@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Alert, ActivityIndicator, View, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { getPessoaById } from '../../services/cadastroService';
+import { papeisPorPessoa } from '../../services/cadastroService';
 
-import { 
-  Container, 
-  Section, 
-  SectionTitle, 
-  InfoRow, 
-  InfoLabel, 
+import {
+  Container,
+  Section,
+  SectionTitle,
+  InfoRow,
+  InfoLabel,
   InfoValue,
   Input,
   ButtonContainer,
@@ -16,106 +18,144 @@ import {
   EditButton,
   EditButtonText,
   PlaceholderText,
-  CondominioCard
+  CondominioCard,
 } from './styles';
+
+const PAPEIS_LABELS = {
+  SINDICO: 'Síndico',
+  MORADOR: 'Morador',
+  FUNCIONARIO_ADM: 'Funcionário ADM',
+  PORTEIRO: 'Porteiro',
+  ADMIN: 'Administrador',
+};
 
 const formatCpfCnpj = (value) => {
   if (!value) return '';
-  const stringValue = value.replace(/\D/g, '');
+  const stringValue = String(value).replace(/\D/g, '');
   if (stringValue.length === 11) {
     return stringValue.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  }
+  if (stringValue.length === 14) {
+    return stringValue.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
   }
   return value;
 };
 
-
 export function MeusDados() {
   const { user, updateUserData } = useAuth();
-  
+
+  const [pessoa, setPessoa] = useState(null);
+  const [papeis, setPapeis] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    pesNome: '',
-    pesEmail: '',
-    pesTelefone1: ''
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({ pesNome: '', pesEmail: '', pesTelefone: '' });
+
+  const carregar = useCallback(async () => {
+    if (!user?.pesCod) return;
+    try {
+      const [pesRes, papRes] = await Promise.all([
+        getPessoaById(user.pesCod),
+        papeisPorPessoa(user.pesCod).catch(() => ({ data: [] })),
+      ]);
+      const p = pesRes.data;
+      setPessoa(p);
+      setPapeis(papRes.data ?? []);
+      setFormData({
+        pesNome: p?.pesNome ?? '',
+        pesEmail: p?.pesEmail ?? '',
+        pesTelefone: p?.pesTelefone ?? '',
+      });
+    } catch (e) {
+      console.warn('Falha ao carregar pessoa:', e?.response?.data || e.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.pesCod]);
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        pesNome: user.pesNome || '',
-        pesEmail: user.pesEmail || '',
-        pesTelefone1: user.pesTelefone1 || ''
-      });
-    }
-  }, [user]);
+    carregar();
+  }, [carregar]);
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    setIsLoading(true);
+    setIsSaving(true);
     try {
-      await updateUserData(formData);
+      await updateUserData({
+        pesNome: formData.pesNome,
+        pesEmail: formData.pesEmail,
+        pesTelefone: formData.pesTelefone,
+      });
+      await carregar();
       Alert.alert('Sucesso', 'Seus dados foram atualizados.');
       setIsEditing(false);
     } catch (error) {
       Alert.alert('Erro', error.message);
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <Container>
+        <ActivityIndicator size="large" color="#0D47A1" style={{ marginTop: 40 }} />
+      </Container>
+    );
+  }
 
   return (
     <Container>
       <ScrollView>
         <Section>
           <SectionTitle>Dados Pessoais</SectionTitle>
-          
+
           <InfoRow>
             <InfoLabel>Nome Completo</InfoLabel>
             {isEditing ? (
-              <Input 
+              <Input
                 value={formData.pesNome}
                 onChangeText={(text) => handleInputChange('pesNome', text)}
               />
             ) : (
-              <InfoValue>{user?.pesNome || 'Não informado'}</InfoValue>
+              <InfoValue>{pessoa?.pesNome || 'Não informado'}</InfoValue>
             )}
           </InfoRow>
-          
+
           <InfoRow>
             <InfoLabel>E-mail</InfoLabel>
             {isEditing ? (
-              <Input 
+              <Input
                 value={formData.pesEmail}
                 onChangeText={(text) => handleInputChange('pesEmail', text)}
                 keyboardType="email-address"
               />
             ) : (
-              <InfoValue>{user?.pesEmail || 'Não informado'}</InfoValue>
+              <InfoValue>{pessoa?.pesEmail || 'Não informado'}</InfoValue>
             )}
           </InfoRow>
 
           <InfoRow>
-            <InfoLabel>Telefone Celular</InfoLabel>
+            <InfoLabel>Telefone</InfoLabel>
             {isEditing ? (
-              <Input 
-                value={formData.pesTelefone1}
-                onChangeText={(text) => handleInputChange('pesTelefone1', text)}
+              <Input
+                value={formData.pesTelefone}
+                onChangeText={(text) => handleInputChange('pesTelefone', text)}
                 keyboardType="phone-pad"
               />
             ) : (
-              <InfoValue>{user?.pesTelefone1 || 'Não informado'}</InfoValue>
+              <InfoValue>{pessoa?.pesTelefone || 'Não informado'}</InfoValue>
             )}
           </InfoRow>
 
           <InfoRow>
             <InfoLabel>CPF/CNPJ</InfoLabel>
-            <InfoValue>{formatCpfCnpj(user?.pesCpfCnpj) || 'Não informado'}</InfoValue>
+            <InfoValue>{formatCpfCnpj(pessoa?.pesCpfCnpj) || 'Não informado'}</InfoValue>
           </InfoRow>
-          
+
           {!isEditing ? (
             <EditButton onPress={() => setIsEditing(true)}>
               <EditButtonText>Editar Dados</EditButtonText>
@@ -125,25 +165,25 @@ export function MeusDados() {
               <Button onPress={() => setIsEditing(false)} color="#757575">
                 <ButtonText>Cancelar</ButtonText>
               </Button>
-              <Button onPress={handleSave} color="#0D47A1" disabled={isLoading}>
-                {isLoading ? <ActivityIndicator color="#fff" /> : <ButtonText>Salvar</ButtonText>}
+              <Button onPress={handleSave} color="#0D47A1" disabled={isSaving}>
+                {isSaving ? <ActivityIndicator color="#fff" /> : <ButtonText>Salvar</ButtonText>}
               </Button>
             </ButtonContainer>
           )}
         </Section>
 
         <Section>
-          <SectionTitle>Dados do Condomínio</SectionTitle>
-          {user?.condominios && user.condominios.length > 0 ? (
-            user.condominios.map((condo) => (
-              <CondominioCard key={condo.conCod}>
+          <SectionTitle>Meus Vínculos com Condomínios</SectionTitle>
+          {papeis.length > 0 ? (
+            papeis.map((p) => (
+              <CondominioCard key={`${p.pesCod}-${p.conCod}-${p.uscPapel}`}>
                 <InfoRow>
-                  <InfoLabel>Nome do Condomínio</InfoLabel>
-                  <InfoValue>{condo.conNome}</InfoValue>
+                  <InfoLabel>Condomínio</InfoLabel>
+                  <InfoValue>{p.condominio?.conNome ?? `#${p.conCod}`}</InfoValue>
                 </InfoRow>
                 <InfoRow>
-                  <InfoLabel>Endereço</InfoLabel>
-                  <InfoValue>{`${condo.conLogradouro}, ${condo.conNumero}`}</InfoValue>
+                  <InfoLabel>Papel</InfoLabel>
+                  <InfoValue>{PAPEIS_LABELS[p.uscPapel] ?? p.uscPapel}</InfoValue>
                 </InfoRow>
               </CondominioCard>
             ))
@@ -152,9 +192,6 @@ export function MeusDados() {
               Você não está associado a nenhum condomínio.
             </PlaceholderText>
           )}
-          <PlaceholderText style={{fontSize: 12, marginTop: 16}}>
-            A edição dos dados do condomínio não está disponível.
-          </PlaceholderText>
         </Section>
       </ScrollView>
     </Container>

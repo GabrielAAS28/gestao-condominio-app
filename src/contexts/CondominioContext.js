@@ -1,5 +1,9 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
-import { getComunicacoes, createComunicado, deleteComunicado } from '../services/comunicacaoService';
+import {
+  listarComunicados as getComunicacoes,
+  criarComunicado as createComunicado,
+  deletarComunicado as deleteComunicado,
+} from '../services/comunicadosService';
 import { notificationService } from '../services/NotificationService';
 import { Alert } from 'react-native';
 
@@ -15,24 +19,24 @@ export const CondominioProvider = ({ children }) => {
     setError(null);
     try {
       const response = await getComunicacoes();
-      setComunicados(response.data);
+      // A nova API retorna { items, total, take, skip }
+      const list = Array.isArray(response.data) ? response.data : response.data?.items ?? [];
+      setComunicados(list);
     } catch (err) {
-      console.error("--- ERRO DETALHADO AO BUSCAR COMUNICADOS ---");
-      if (err.response) {
-        // O servidor respondeu com um status de erro (4xx ou 5xx)
-        console.error("Data:", err.response.data);
-        console.error("Status:", err.response.status);
-        console.error("Headers:", err.response.headers);
-      } else if (err.request) {
-        // A requisição foi feita mas não houve resposta
-        console.error("Request:", err.request);
-      } else {
-        // Algo aconteceu ao configurar a requisição
-        console.error('Error', err.message);
-      }
-      console.error("-----------------------------------------");
+      // Loga como string para não depender de expandir objetos no DevTools
+      const dump = {
+        url: err.config?.url,
+        method: err.config?.method,
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message,
+      };
+      console.error('[Comunicados][ERRO]', JSON.stringify(dump, null, 2));
 
-      const errorMessage = err.response?.data?.message || "Não foi possível carregar os comunicados.";
+      const apiMsg = err.response?.data?.message;
+      const errorMessage = Array.isArray(apiMsg)
+        ? apiMsg.join('; ')
+        : apiMsg || 'Não foi possível carregar os comunicados.';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -45,7 +49,7 @@ export const CondominioProvider = ({ children }) => {
       setComunicados(prev => [response.data, ...prev]);
       notificationService.localNotification(
         'Novo Comunicado!',
-        novoComunicado.comAssunto
+        novoComunicado.titulo ?? novoComunicado.comAssunto ?? '',
       );
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Não foi possível criar o comunicado.";

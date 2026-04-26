@@ -1,24 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { styles } from './styles';
 
 export function Cobrancas() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tela de Perfil</Text>
-      <Text>Em construção...</Text>
+      <Icon name="dollar-sign" size={64} color="#BDBDBD" />
+      <Text style={styles.title}>Cobranças</Text>
+      <Text style={styles.subtitle}>Módulo em desenvolvimento.</Text>
+      <Text style={styles.detail}>
+        A integração com boletos / taxa condominial ainda não está disponível
+        nesta versão da API.
+      </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-});

@@ -79,12 +79,11 @@ export function AlterarSenha({ navigation }) {
 
     setIsLoading(true);
     try {
-      const data = {
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-      };
-      
-      await alterarSenha(data);
+      // A API NestJS espera senhaAtual / novaSenha
+      await alterarSenha({
+        senhaAtual: currentPassword,
+        novaSenha: newPassword,
+      });
 
       Alert.alert('Sucesso!', 'Sua senha foi alterada.', [
         { text: 'OK', onPress: () => navigation.goBack() }

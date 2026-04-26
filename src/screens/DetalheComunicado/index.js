@@ -22,21 +22,27 @@ export function DetalheComunicado() {
   // Recebe o objeto 'comunicado' completo que foi passado via navegação
   const { comunicado } = route.params;
 
-  // Formata a data para um formato mais legível
-  const formattedDate = comunicado.comDataCadastro
-    ? format(new Date(comunicado.comDataCadastro), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-        locale: ptBR,
-      })
+  const dataIso = comunicado.dataCadastro ?? comunicado.comDataCadastro;
+  const formattedDate = dataIso
+    ? format(new Date(dataIso), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })
     : 'Data não disponível';
+
+  const tituloTxt = comunicado.titulo ?? comunicado.comAssunto ?? '';
+  const mensagemTxt = comunicado.mensagem ?? comunicado.comMensagem ?? '';
+  const autor =
+    comunicado.pessoaCriador?.pesNome ?? comunicado.pessoa?.pesNome ?? 'Sistema';
 
   return (
     <Container>
       <ScrollView>
         <Header>
-          <Title>{comunicado.comAssunto}</Title>
+          <Title>
+            {comunicado.isUrgente ? '🔴 ' : ''}
+            {tituloTxt}
+          </Title>
           <Meta>
             <Icon name="user" size={14} color="#555" />
-            <Author>Por: {comunicado.pessoa?.pesNome || 'Sistema'}</Author>
+            <Author>Por: {autor}</Author>
           </Meta>
           <Meta>
             <Icon name="calendar" size={14} color="#555" />
@@ -44,7 +50,7 @@ export function DetalheComunicado() {
           </Meta>
         </Header>
         <Content>
-          <Message>{comunicado.comMensagem}</Message>
+          <Message>{mensagemTxt}</Message>
         </Content>
       </ScrollView>
     </Container>

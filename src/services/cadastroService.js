@@ -1,50 +1,40 @@
 import api from './api';
 
-// Este serviço agrupa as funções de criação (POST) e atualização (PUT)
-// das principais entidades do sistema.
+// ===== PESSOAS =====
+export const cadastrarPessoa = (data) => api.post('/pessoas', data);
+export const updatePessoa = (id, data) => api.put(`/pessoas/${id}`, data);
+export const getPessoaById = (id) => api.get(`/pessoas/${id}`);
+export const listarPessoas = (params) => api.get('/pessoas', { params });
 
-/**
- * POST /pessoas
- * Cadastra uma nova pessoa física ou jurídica no sistema.
- * @param {object} dadosPessoa - Ex: { pesNome, pesCpfCnpj, pesTipo, pesEmail, pesSenhaLogin }
- */
-export const cadastrarPessoa = (dadosPessoa) => {
-  // CORREÇÃO: Removido o '/api' do início do caminho.
-  return api.post('/pessoas', dadosPessoa);
-};
+// ===== CONDOMÍNIOS =====
+export const cadastrarCondominio = (data) => api.post('/condominios', data);
+export const listarCondominios = (params) => api.get('/condominios', { params });
+export const getCondominioById = (id) => api.get(`/condominios/${id}`);
+export const updateCondominio = (id, data) => api.put(`/condominios/${id}`, data);
 
-/**
- * PUT /pessoas/{id}
- * Atualiza os dados de uma pessoa existente.
- * @param {number} id - O ID da pessoa a ser atualizada.
- * @param {object} dadosPessoa - Os dados a serem atualizados.
- */
-export const updatePessoa = (id, dadosPessoa) => {
-  return api.put(`/pessoas/${id}`, dadosPessoa);
-};
+// ===== UNIDADES =====
+export const cadastrarUnidade = (data) => api.post('/unidades', data);
+export const listarUnidades = (params) => api.get('/unidades', { params });
+export const getUnidadeById = (id) => api.get(`/unidades/${id}`);
+export const updateUnidade = (id, data) => api.put(`/unidades/${id}`, data);
 
+// ===== OCUPANTES (substitui o antigo /moradores) =====
+export const cadastrarOcupante = (data) => api.post('/ocupantes', data);
+export const ocupantesPorUnidade = (unidadeId) =>
+  api.get(`/ocupantes/por-unidade/${unidadeId}`);
+export const ocupantesPorPessoa = (pesCod) =>
+  api.get(`/ocupantes/por-pessoa/${pesCod}`);
+export const getOcupanteById = (id) => api.get(`/ocupantes/${id}`);
+export const atualizarOcupante = (id, data) => api.put(`/ocupantes/${id}`, data);
+export const removerOcupante = (id) => api.delete(`/ocupantes/${id}`);
 
-
-export const cadastrarCondominio = (dadosCondominio) => {
-  return api.post('/condominios', dadosCondominio);
-};
-
-export const cadastrarUnidade = (dadosUnidade) => {
-  return api.post('/unidades', dadosUnidade);
-};
-
-export const vincularMorador = (dadosVinculo) => {
-  return api.post('/moradores', dadosVinculo);
-};
-
-export const concederPapelCondominio = (dadosPapel) => {
-  return api.post('/usuarios/condominios', dadosPapel);
-};
-
-export const cadastrarAreaComum = (dadosAreaComum) => {
-  return api.post('/areascomuns', dadosAreaComum);
-};
-
-export const abrirChamadoManutencao = (dadosManutencao) => {
-  return api.post('/manutencoes', dadosManutencao);
-};
+// ===== USUÁRIO ↔ CONDOMÍNIO (papéis) =====
+// Substitui o antigo /usuarios/condominios. A nova API expõe /usuario-condominio.
+// Body: { pesCod, conCod, papel: 'SINDICO' | 'MORADOR' | 'FUNCIONARIO_ADM' | 'PORTEIRO' | 'ADMIN' }
+export const associarPapel = (data) => api.post('/usuario-condominio', data);
+export const desassociarPapel = ({ pesCod, conCod, papel }) =>
+  api.delete(`/usuario-condominio/${pesCod}/${conCod}/${papel}`);
+export const papeisPorPessoa = (pesCod) =>
+  api.get(`/usuario-condominio/por-pessoa/${pesCod}`);
+export const papeisPorCondominio = (conCod) =>
+  api.get(`/usuario-condominio/por-condominio/${conCod}`);

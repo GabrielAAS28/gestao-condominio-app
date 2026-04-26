@@ -1,0 +1,22 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#F5F5F5' },
+  center: { justifyContent: 'center', alignItems: 'center' },
+  tabs: { flexDirection: 'row', backgroundColor: '#FFF', elevation: 2 },
+  tab: { flex: 1, padding: 12, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
+  tabActive: { borderBottomColor: '#0D47A1' },
+  tabText: { color: '#757575' },
+  tabTextActive: { color: '#0D47A1', fontWeight: 'bold' },
+  card: { backgroundColor: '#FFF', padding: 16, borderRadius: 8, marginBottom: 12, elevation: 2 },
+  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#212121' },
+  cardLine: { fontSize: 13, color: '#555', marginTop: 2 },
+  pill: { alignSelf: 'flex-start', color: '#FFF', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12, fontSize: 11, marginTop: 6, overflow: 'hidden' },
+  btn: { paddingVertical: 8, paddingHorizontal: 16, borderRadius: 4, marginTop: 10, alignItems: 'center' },
+  btnText: { color: '#FFF', fontWeight: 'bold' },
+  fab: { position: 'absolute', right: 24, bottom: 24, width: 56, height: 56, borderRadius: 28, backgroundColor: '#0D47A1', alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 16 },
+  modal: { backgroundColor: '#FFF', padding: 16, borderRadius: 8 },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
+  input: { borderWidth: 1, borderColor: '#DDD', borderRadius: 6, padding: 10, marginBottom: 8, backgroundColor: '#FAFAFA' },
+});
