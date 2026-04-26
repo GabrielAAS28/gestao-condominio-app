@@ -88,3 +88,20 @@ export const EmptyListText = styled.Text`
   margin-top: 16px;
   color: ${({ theme }) => theme.colors.text_secondary};
 `;
+
+export const Fab = styled.TouchableOpacity`
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: ${({ theme }) => theme.colors.primary};
+  align-items: center;
+  justify-content: center;
+  elevation: 6;
+  shadow-color: #000;
+  shadow-opacity: 0.25;
+  shadow-radius: 4px;
+  shadow-offset: 0px 2px;
+`;

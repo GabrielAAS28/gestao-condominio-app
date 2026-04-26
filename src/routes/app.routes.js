@@ -16,9 +16,11 @@ import { Home } from '../screens/Home';
 import { CriarComunicado } from '../screens/CriarComunicado';
 import { Cobrancas } from '../screens/Cobrancas';
 import { Reservas } from '../screens/Reservas';
+import { CriarReserva } from '../screens/CriarReserva';
+import { PagarCobranca } from '../screens/PagarCobranca';
 import { Perfil } from '../screens/Perfil';
 import { MeusDados } from '../screens/MeusDados';
-import { AlterarSenha } from '../screens/AlterarSenha'; 
+import { AlterarSenha } from '../screens/AlterarSenha';
 
 import { DetalheComunicado } from '../screens/DetalheComunicado';
 
@@ -43,6 +45,36 @@ function HomeStack() {
           headerTintColor: '#333',
         }} 
       />
+    </Stack.Navigator>
+  );
+}
+
+function ReservasStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
+      <Stack.Screen name="ReservasList" component={Reservas} options={{ headerShown: false }} />
+      <Stack.Screen name="CriarReserva" component={CriarReserva} options={{ title: 'Nova Reserva' }} />
+    </Stack.Navigator>
+  );
+}
+
+function CobrancasStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: '#fff' },
+        headerTintColor: '#333',
+      }}
+    >
+      <Stack.Screen name="CobrancasList" component={Cobrancas} options={{ headerShown: false }} />
+      <Stack.Screen name="PagarCobranca" component={PagarCobranca} options={{ title: 'Pagamento' }} />
     </Stack.Navigator>
   );
 }
@@ -81,14 +113,14 @@ function MoradorTabNavigator() {
         component={HomeStack} 
         options={{ tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} /> }}
       />
-      <Tab.Screen 
-        name="Cobranças" 
-        component={Cobrancas} 
+      <Tab.Screen
+        name="Cobranças"
+        component={CobrancasStack}
         options={{ tabBarIcon: ({ color, size }) => <FontAwesome name="dollar" size={size} color={color} /> }}
       />
-      <Tab.Screen 
-        name="Reservas" 
-        component={Reservas} 
+      <Tab.Screen
+        name="Reservas"
+        component={ReservasStack}
         options={{ tabBarIcon: ({ color, size }) => <Feather name="calendar" size={size} color={color} /> }}
       />
       <Tab.Screen 
