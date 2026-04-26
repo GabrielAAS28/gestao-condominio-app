@@ -223,12 +223,13 @@ export function Reservas() {
         }
       />
 
-      {tab === 'minhas' && (
-        <TouchableOpacity style={styles.floatingButton} onPress={() => setTab('areas')}>
-          <Icon name="plus" size={24} color="#fff" />
-          <Text style={styles.floatingButtonText}>Nova reserva</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('CriarReserva')}
+      >
+        <Icon name="plus" size={24} color="#fff" />
+        <Text style={styles.floatingButtonText}>Nova reserva</Text>
+      </TouchableOpacity>
     </View>
   );
 }

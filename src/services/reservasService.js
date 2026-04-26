@@ -5,6 +5,24 @@ import api from './api';
 export const listarAreasComuns = (params) => api.get('/areas-comuns', { params });
 export const getAreaComumById = (id) => api.get(`/areas-comuns/${id}`);
 
+// POST /areas-comuns
+export const criarAreaComum = (data) => api.post('/areas-comuns', data);
+// PUT /areas-comuns/:id
+export const atualizarAreaComum = (id, data) => api.put(`/areas-comuns/${id}`, data);
+// DELETE /areas-comuns/:id
+export const removerAreaComum = (id) => api.delete(`/areas-comuns/${id}`);
+
+// ----- Turnos -----
+// POST /areas-comuns/:id/turnos
+export const adicionarTurno = (areaId, data) =>
+  api.post(`/areas-comuns/${areaId}/turnos`, data);
+// PUT /areas-comuns/turnos/:turCod
+export const atualizarTurno = (turCod, data) =>
+  api.put(`/areas-comuns/turnos/${turCod}`, data);
+// DELETE /areas-comuns/turnos/:turCod
+export const removerTurno = (turCod) =>
+  api.delete(`/areas-comuns/turnos/${turCod}`);
+
 // ===== RESERVAS =====
 // Listagem com filtros via query string (não há mais /minhas-reservas / /por-area):
 //   condominioId, unidadeId, areaComumId, pesCodMorador, status, dataDe, dataAte

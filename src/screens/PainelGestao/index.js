@@ -112,6 +112,11 @@ export function PainelGestao() {
           label="Encomendas"
           onPress={() => navigation.navigate('Encomendas')}
         />
+        <Shortcut
+          icon="grid"
+          label="Áreas Comuns"
+          onPress={() => navigation.navigate('GestaoAreasComuns')}
+        />
       </View>
 
       <Text style={styles.heading}>Reservas pendentes</Text>

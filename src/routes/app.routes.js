@@ -25,6 +25,8 @@ import { Encomendas } from '../screens/Encomendas';
 import { Ocorrencias } from '../screens/Ocorrencias';
 import { DetalheOcorrencia } from '../screens/DetalheOcorrencia';
 import { PainelGestao } from '../screens/PainelGestao';
+import { GestaoAreasComuns } from '../screens/GestaoAreasComuns';
+import { EditarAreaComum } from '../screens/EditarAreaComum';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -167,6 +169,18 @@ function GestaoStack() {
         name="DetalheOcorrencia"
         component={DetalheOcorrencia}
         options={{ title: 'Detalhe da Ocorrência' }}
+      />
+      <Stack.Screen
+        name="GestaoAreasComuns"
+        component={GestaoAreasComuns}
+        options={{ title: 'Áreas Comuns' }}
+      />
+      <Stack.Screen
+        name="EditarAreaComum"
+        component={EditarAreaComum}
+        options={({ route }) => ({
+          title: route.params?.areaId ? 'Editar Área' : 'Nova Área',
+        })}
       />
     </Stack.Navigator>
   );
