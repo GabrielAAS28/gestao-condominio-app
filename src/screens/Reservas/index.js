@@ -18,7 +18,8 @@ import {
   IconText,
   LoadingContainer,
   EmptyListContainer,
-  EmptyListText
+  EmptyListText,
+  Fab
 } from './styles';
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -104,6 +105,9 @@ export function Reservas() {
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} colors={["#007bff"]} />
         }
       />
+      <Fab onPress={() => navigation.navigate('CriarReserva')} activeOpacity={0.8}>
+        <Icon name="plus" size={28} color="#fff" />
+      </Fab>
     </Container>
   );
 }
