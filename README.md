@@ -214,5 +214,6 @@ Após rodar o seed, todos os logins abaixo usam senha **`123456`**:
 4. Aguarde o review
 
 ---
+Este software é um produto comercial.
 
-<sub>Projeto pessoal/acadêmico — Gabriel Amorim de Aragão Souza · 2026</sub>
+Copyright (c) 2025 Horizon AJ Soluções Digitais Ltda. Todos os direitos reservados.
