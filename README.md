@@ -215,4 +215,4 @@ Após rodar o seed, todos os logins abaixo usam senha **`123456`**:
 
 ---
 
-<sub>Projeto pessoal/acadêmico — Gabriel Antônio Soares · 2026</sub>
+<sub>Projeto pessoal/acadêmico — Gabriel Amorim de Aragão Souza · 2026</sub>
