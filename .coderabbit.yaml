@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# Configuracao do CodeRabbit AI — review automatico de Pull Requests.
+# Docs: https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: pt-BR
+early_access: false
+
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+  collapse_walkthrough: false
+  poem: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+
+  path_filters:
+    - '!**/node_modules/**'
+    - '!**/coverage/**'
+    - '!**/build/**'
+    - '!android/app/build/**'
+    - '!ios/Pods/**'
+    - '!**/package-lock.json'
+    - '!**/*.lock'
+
+  path_instructions:
+    - path: 'src/**/*.{js,jsx,ts,tsx}'
+      instructions: >-
+        App React Native 0.80 (New Architecture + Hermes ligados).
+        Priorize nesta ordem:
+        (1) Bugs de hook: dependencias faltando em useEffect/useCallback/
+        useMemo (stale closure), setState apos unmount, listener sem cleanup.
+        (2) Performance de lista: FlatList sem keyExtractor, funcao inline
+        em renderItem, componente pesado sem memo.
+        (3) Vazamento de dados: token ou senha em console.log; segredo
+        hardcoded; dado sensivel em AsyncStorage sem necessidade.
+        (4) UX de rede: chamada de API sem tratamento de erro, sem estado
+        de loading, ou sem feedback ao usuario quando falha.
+        (5) Acessibilidade: Touchable sem accessibilityLabel.
+
+    - path: 'src/services/**'
+      instructions: >-
+        Camada de acesso a API (axios). Verifique baseURL vinda de config e
+        nao hardcoded, interceptor de refresh token sem loop infinito,
+        timeout definido, e que erro de rede nao vaze token no log.
+
+    - path: 'src/contexts/**'
+      instructions: >-
+        Context Providers. Verifique se o `value` esta memoizado (objeto novo
+        a cada render re-renderiza toda a arvore), e se o estado de auth e
+        limpo corretamente no logout.
+
+    - path: 'android/**'
+      instructions: >-
+        Sinalize keystore, senha de assinatura ou chave de API commitada.
+        Verifique mudancas de permissao no AndroidManifest e alteracoes de
+        minSdk/targetSdk que quebrem compatibilidade.
+
+    - path: '.github/workflows/**'
+      instructions: >-
+        Verifique actions sem versao fixada, secrets expostos em
+        `pull_request_target` e permissions amplas demais no GITHUB_TOKEN.
+
+  tools:
+    eslint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    actionlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: false
+
+chat:
+  auto_reply: true

@@ -7,7 +7,12 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "lint:ci": "eslint . --max-warnings=79",
+    "typecheck": "tsc --noEmit",
+    "test:ci": "jest --ci --coverage --passWithNoTests",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" \"*.js\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\" \"*.js\""
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.2.0",

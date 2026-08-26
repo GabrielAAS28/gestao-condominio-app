@@ -1,0 +1,186 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+  JAVA_VERSION: '17'
+
+jobs:
+  # ---------------------------------------------------------------
+  # 1) Lint, tipos e testes
+  # ---------------------------------------------------------------
+  quality:
+    name: Lint, Types & Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # `lint:ci` usa um orcamento de warnings (--max-warnings) travado no
+      # numero atual: erros novos e warnings novos quebram o build, mas o
+      # backlog existente nao bloqueia o time. Baixe o numero conforme limpar.
+      - name: ESLint
+        run: npm run lint:ci
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Testes (Jest)
+        run: npm run test:ci
+
+      - name: Upload cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------
+  # 2) Bundle Metro + compilacao Hermes
+  #    Pega import quebrado / modulo faltando que o ESLint nao ve, e
+  #    valida que o bundle compila para o motor Hermes (hermesEnabled=true).
+  # ---------------------------------------------------------------
+  bundle:
+    name: Metro Bundle + Hermes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Gerar bundle de producao (Android)
+        run: |
+          mkdir -p build/bundle
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output build/bundle/index.android.bundle \
+            --assets-dest build/bundle
+
+      - name: Compilar o bundle com Hermes
+        run: |
+          set -euo pipefail
+          HERMESC="node_modules/react-native/sdks/hermesc/linux64-bin/hermesc"
+          if [ ! -x "$HERMESC" ]; then
+            echo "::warning::hermesc nao encontrado em $HERMESC — pulando."
+            exit 0
+          fi
+          "$HERMESC" -emit-binary -out build/bundle/index.android.hbc \
+            build/bundle/index.android.bundle
+          ls -lh build/bundle/index.android.hbc
+
+      - name: Upload do bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-bundle
+          path: build/bundle/
+          retention-days: 5
+
+  # ---------------------------------------------------------------
+  # 3) Build do APK Android
+  # ---------------------------------------------------------------
+  android:
+    name: Android Build (APK)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle (com cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # ATENCAO: o template padrao do RN assina o release com a debug.keystore
+      # (android/app/build.gradle). Este APK serve para teste interno, NAO
+      # para publicar na Play Store. Veja o README de CI para assinar de verdade.
+      - name: Gradle assembleRelease
+        working-directory: android
+        # As arquiteturas sao forcadas aqui de proposito: o gradle.properties
+        # local pode estar com 'reactNativeArchitectures=x86_64' (atalho para
+        # emulador no Windows). Um APK so-x86_64 NAO roda em celular real,
+        # entao o CI ignora esse valor e sempre gera para ARM.
+        run: ./gradlew assembleRelease --no-daemon --stacktrace -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      - name: Localizar APK
+        id: apk
+        run: |
+          set -euo pipefail
+          APK=$(find android/app/build/outputs/apk -name '*.apk' | head -n1)
+          if [ -z "$APK" ]; then
+            echo "::error::Nenhum APK gerado."
+            exit 1
+          fi
+          echo "path=$APK" >> "$GITHUB_OUTPUT"
+          ls -lh "$APK"
+
+      - name: Upload do APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: ${{ steps.apk.outputs.path }}
+          retention-days: 14
+
+  # ---------------------------------------------------------------
+  # 4) Gate unico: use ESTE check na branch protection
+  # ---------------------------------------------------------------
+  ci-gate:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    needs: [quality, bundle, android]
+    if: always()
+    steps:
+      - name: Falhar se qualquer job anterior falhou
+        run: |
+          echo "quality: ${{ needs.quality.result }}"
+          echo "bundle:  ${{ needs.bundle.result }}"
+          echo "android: ${{ needs.android.result }}"
+          if [ "${{ needs.quality.result }}" != "success" ] || \
+             [ "${{ needs.bundle.result }}" != "success" ] || \
+             [ "${{ needs.android.result }}" != "success" ]; then
+            echo "::error::Um ou mais checks de CI falharam. Merge bloqueado."
+            exit 1
+          fi
+          echo "Todos os checks passaram."
