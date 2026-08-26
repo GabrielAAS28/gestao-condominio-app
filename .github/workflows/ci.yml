@@ -113,7 +113,9 @@ jobs:
   android:
     name: Android Build (APK)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # Compila C++ nativo para duas ABIs (New Architecture); o primeiro run,
+    # sem cache do Gradle, e o mais demorado.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -136,6 +138,16 @@ jobs:
       # ATENCAO: o template padrao do RN assina o release com a debug.keystore
       # (android/app/build.gradle). Este APK serve para teste interno, NAO
       # para publicar na Play Store. Veja o README de CI para assinar de verdade.
+      # Com newArchEnabled=true, o CMake do :app faz add_subdirectory nos
+      # diretorios de codegen JNI de cada biblioteca autolinkada
+      # (async-storage, gesture-handler, image-picker, vector-icons...).
+      # Num checkout limpo esses diretorios ainda nao existem quando o
+      # :app:configureCMake roda, e o build morre com CXX1429.
+      # Gerar o codegen em todos os modulos antes resolve a ordem.
+      - name: Gerar codegen da New Architecture
+        working-directory: android
+        run: ./gradlew generateCodegenArtifactsFromSchema --no-daemon
+
       - name: Gradle assembleRelease
         working-directory: android
         # As arquiteturas sao forcadas aqui de proposito: o gradle.properties
