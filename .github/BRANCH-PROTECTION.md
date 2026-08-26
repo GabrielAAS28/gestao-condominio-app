@@ -74,6 +74,23 @@ executou pelo menos uma vez naquele repositório. Ordem correta:
 
 ---
 
+## Estrategia de merge
+
+`required_linear_history` recusa merge commit. Os dois metodos que
+sobram — **Squash and merge** e **Rebase and merge** — precisam estar
+habilitados, senao voce fica sem nenhuma opcao de merge na tela do PR.
+
+Ja verificado neste repositorio: ambos estao ligados.
+
+Para conferir depois de qualquer mudanca de settings:
+
+```bash
+gh api repos/GabrielAAS28/gestao-condominio-app --jq "{squash: .allow_squash_merge, rebase: .allow_rebase_merge}"
+```
+
+Prefira **Squash**: mantem um commit por PR na `main`, o que combina com
+o historico linear e facilita reverter uma mudanca inteira.
+
 ## CodeRabbit
 
 1. Instale o app: <https://github.com/apps/coderabbitai> → *Add repository*
