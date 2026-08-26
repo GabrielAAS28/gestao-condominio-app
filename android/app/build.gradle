@@ -92,15 +92,34 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // Assinatura de upload da Play Store.
+        //
+        // As quatro propriedades vem de android/gradle.properties (que NAO e
+        // versionado) ou de -P na linha de comando / variavel de ambiente
+        // ORG_GRADLE_PROJECT_*. A keystore nunca entra no repositorio.
+        //
+        // Veja PUBLICAR-PLAY-STORE.md para gerar a keystore.
+        release {
+            if (project.hasProperty('CONDIGTAL_UPLOAD_STORE_FILE')) {
+                storeFile file(project.property('CONDIGTAL_UPLOAD_STORE_FILE'))
+                storePassword project.property('CONDIGTAL_UPLOAD_STORE_PASSWORD')
+                keyAlias project.property('CONDIGTAL_UPLOAD_KEY_ALIAS')
+                keyPassword project.property('CONDIGTAL_UPLOAD_KEY_PASSWORD')
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // Com as propriedades definidas, assina com a chave de upload real.
+            // Sem elas, cai na debug.keystore — o que mantem o build do CI
+            // funcionando sem segredo nenhum, gerando um APK que serve para
+            // teste interno mas que a Play Store rejeita.
+            signingConfig project.hasProperty('CONDIGTAL_UPLOAD_STORE_FILE')
+                ? signingConfigs.release
+                : signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
