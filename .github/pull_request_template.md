@@ -19,7 +19,7 @@
 
 - [ ] `npm run lint:ci` passa localmente
 - [ ] `npm run typecheck` passa localmente
-- [ ] `npm test` passa localmente
+- [ ] `npm run test:ci` passa localmente (mesmo comando do CI)
 - [ ] Testado em Android
 - [ ] Nao introduzi novos warnings de ESLint (o CI trava no orcamento atual)
 - [ ] Novas dependencias nativas: rodei `cd android && ./gradlew clean` e validei o build
