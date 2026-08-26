@@ -76,9 +76,9 @@ executou pelo menos uma vez naquele repositório. Ordem correta:
 
 ## Estrategia de merge
 
-`required_linear_history` recusa merge commit. Os dois metodos que
-sobram — **Squash and merge** e **Rebase and merge** — precisam estar
-habilitados, senao voce fica sem nenhuma opcao de merge na tela do PR.
+`required_linear_history` recusa merge commit. Sobram **Squash and
+merge** e **Rebase and merge**, e **pelo menos um dos dois** precisa estar
+habilitado — senao nao resta nenhuma opcao de merge na tela do PR.
 
 Ja verificado neste repositorio: ambos estao ligados.
 

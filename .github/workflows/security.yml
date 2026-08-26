@@ -24,6 +24,11 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Evita que o GITHUB_TOKEN fique gravado em .git/config,
+          # onde qualquer step seguinte (inclusive postinstall de
+          # dependencia) conseguiria ler.
+          persist-credentials: false
       - uses: github/codeql-action/init@42947a340483f03ba47bb1a039b2c519aab3df85 # v3
         with:
           languages: javascript-typescript
@@ -38,6 +43,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Evita que o GITHUB_TOKEN fique gravado em .git/config,
+          # onde qualquer step seguinte (inclusive postinstall de
+          # dependencia) conseguiria ler.
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
@@ -92,7 +102,15 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          # Evita que o GITHUB_TOKEN fique gravado em .git/config,
+          # onde qualquer step seguinte (inclusive postinstall de
+          # dependencia) conseguiria ler.
+          persist-credentials: false
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # O gitleaks v2 comenta no PR por padrao, o que exigiria
+          # pull-requests: write. Aqui a gente quer que ele FALHE o job,
+          # nao que comente — entao desliga e mantem tudo read-only.
+          GITLEAKS_ENABLE_COMMENTS: 'false'
