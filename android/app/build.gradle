@@ -101,7 +101,31 @@ android {
         // Veja PUBLICAR-PLAY-STORE.md para gerar a keystore.
         release {
             if (project.hasProperty('CONDIGTAL_UPLOAD_STORE_FILE')) {
-                storeFile file(project.property('CONDIGTAL_UPLOAD_STORE_FILE'))
+                // Configuracao parcial e erro de operador. Sem esta checagem
+                // o Gradle estoura MissingPropertyException no meio da fase de
+                // configuracao, com mensagem que nao ajuda a corrigir.
+                def faltando = [
+                    'CONDIGTAL_UPLOAD_STORE_PASSWORD',
+                    'CONDIGTAL_UPLOAD_KEY_ALIAS',
+                    'CONDIGTAL_UPLOAD_KEY_PASSWORD',
+                ].findAll { !project.hasProperty(it) }
+
+                if (!faltando.isEmpty()) {
+                    throw new GradleException(
+                        "Assinatura de upload incompleta. Faltam: ${faltando.join(', ')}.\n" +
+                        "Defina as quatro propriedades. Veja PUBLICAR-PLAY-STORE.md, secao 3."
+                    )
+                }
+
+                def arquivoKeystore = file(project.property('CONDIGTAL_UPLOAD_STORE_FILE'))
+                if (!arquivoKeystore.exists()) {
+                    throw new GradleException(
+                        "Keystore nao encontrada em: ${arquivoKeystore.absolutePath}\n" +
+                        "Confira o caminho em CONDIGTAL_UPLOAD_STORE_FILE."
+                    )
+                }
+
+                storeFile arquivoKeystore
                 storePassword project.property('CONDIGTAL_UPLOAD_STORE_PASSWORD')
                 keyAlias project.property('CONDIGTAL_UPLOAD_KEY_ALIAS')
                 keyPassword project.property('CONDIGTAL_UPLOAD_KEY_PASSWORD')
@@ -123,6 +147,29 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+}
+
+// O `bundleRelease` produz o AAB que vai para a Play Store, e a loja recusa
+// um AAB assinado com a debug.keystore. Falhamos aqui, com instrucao, em vez
+// de deixar o operador descobrir isso no upload do Play Console.
+//
+// O `assembleRelease` continua caindo na debug.keystore de proposito: e o
+// APK de teste interno que o CI publica como artefato, e forcar assinatura
+// real ali obrigaria a guardar a keystore nos secrets do repositorio.
+// A checagem roda quando o grafo de tarefas fica pronto, nao em doFirst:
+// assim ela falha logo apos a configuracao, e nao depois de compilar o
+// projeto inteiro para so entao reclamar.
+gradle.taskGraph.whenReady { grafo ->
+    def vaiGerarAab = grafo.allTasks.any { it.name == 'bundleRelease' }
+    if (vaiGerarAab && !project.hasProperty('CONDIGTAL_UPLOAD_STORE_FILE')) {
+        throw new GradleException(
+            "bundleRelease exige a chave de upload configurada.\n" +
+            "Defina CONDIGTAL_UPLOAD_STORE_FILE, CONDIGTAL_UPLOAD_STORE_PASSWORD,\n" +
+            "CONDIGTAL_UPLOAD_KEY_ALIAS e CONDIGTAL_UPLOAD_KEY_PASSWORD.\n" +
+            "Veja PUBLICAR-PLAY-STORE.md, secao 3.\n\n" +
+            "Para um APK de teste interno (assinado em debug), use assembleRelease."
+        )
     }
 }
 

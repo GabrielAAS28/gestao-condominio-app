@@ -1,0 +1,17 @@
+# O ESLint nao le o .gitignore, entao artefatos gerados precisam ser listados
+# aqui tambem. Sem isso o resultado local diverge do CI: quem roda os testes
+# antes do lint passa a contar os warnings do relatorio HTML de cobertura,
+# estoura o orcamento do --max-warnings e ve uma falha que o CI nao ve.
+
+coverage/
+build/
+node_modules/
+
+# Codigo nativo — nao e JavaScript de aplicacao.
+android/
+ios/
+vendor/
+
+# Artefatos de bundle
+*.bundle
+*.hbc

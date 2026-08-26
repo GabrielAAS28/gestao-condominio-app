@@ -1,27 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '../config/env';
 
-// ===== CONFIGURAÇÃO DE BASE URL =====
+// Este módulo não declara endereço: ele só monta o cliente HTTP. A escolha
+// entre desenvolvimento e produção vive em src/config/env.js.
 //
-// `__DEV__` é injetado pelo Metro: vale true em `react-native run-android`
-// e false em qualquer build de release (assembleRelease / bundleRelease).
-// Ou seja, o APK/AAB publicado usa sempre a URL de produção, sem depender
-// de ninguém lembrar de trocar a constante antes de gerar o build.
-//
-// Desenvolvimento:
-//   Emulador Android: 10.0.2.2 mapeia para o localhost da máquina host
-//   iOS Simulator:    'http://localhost:3000/api'
-//   Device físico:    IP da sua máquina na rede local
-//                     (ex.: 'http://192.168.1.10:3000/api')
-const DEV_BASE_URL = 'http://10.0.2.2:3000/api';
-
-// Produção: domínio público da API no Railway. Precisa ser HTTPS — desde o
-// targetSdk 28 o Android bloqueia tráfego em texto puro por padrão, então
-// um endereço http:// aqui falha silenciosamente no app publicado.
-const PROD_BASE_URL =
-  'https://api-gestao-condominio-production.up.railway.app/api';
-
-const BASE_URL = __DEV__ ? DEV_BASE_URL : PROD_BASE_URL;
+// Reexportado como BASE_URL no fim do arquivo para não quebrar quem já
+// importa daqui (ex.: ocorrenciasService monta URL de download de anexo).
+const BASE_URL = API_BASE_URL;
 
 const TOKEN_KEY = '@GestaoCondominio:accessToken';
 const REFRESH_KEY = '@GestaoCondominio:refreshToken';

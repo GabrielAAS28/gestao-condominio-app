@@ -26,9 +26,23 @@ Se um dia mudar o domínio da API, é só editar `PROD_BASE_URL`.
 
 ## 2. Gerar a keystore de upload
 
-**Uma vez só, e guarde bem.** Perder este arquivo significa perder a
-capacidade de atualizar o app — a Play Store não aceita uma chave diferente,
-e recuperar exige abrir chamado com o Google.
+**Uma vez só, e guarde bem.**
+
+O que você gera aqui é a **chave de upload**, que serve para provar ao Google
+que o envio é seu. Com o Play App Signing ativo (padrão para apps novos), a
+**chave de assinatura** do app é outra, gerada e guardada pelo Google.
+
+Consequência prática: perder a `upload.keystore` **não** significa perder o
+app. Você fica impedido de enviar novas versões até pedir um *reset da chave
+de upload* no Play Console, e depois volta a publicar normalmente.
+
+O que seria irreversível é perder a chave de assinatura — e essa o Google
+guarda para você. Só que isso vale **se** o Play App Signing estiver ativo;
+sem ele, perder a keystore realmente inviabiliza atualizar o app. Confirme
+que está ativo em *Configuração → Assinatura de apps* no Play Console.
+
+Ainda assim, trate a keystore como algo a não perder: o reset é burocracia
+que trava o release por dias.
 
 ```bash
 keytool -genkeypair -v -storetype PKCS12 \
@@ -49,19 +63,41 @@ arquivo junto com a máquina.
 
 ## 3. Configurar a assinatura
 
-Crie `android/gradle.properties.local` ou acrescente ao
-`android/gradle.properties` (que **não** deve ser commitado com estes valores):
+Coloque as quatro propriedades no **`gradle.properties` do seu usuário**, que
+fica fora do repositório:
+
+| Sistema | Caminho |
+|---|---|
+| Windows | `C:\Users\<voce>\.gradle\gradle.properties` |
+| macOS / Linux | `~/.gradle/gradle.properties` |
 
 ```properties
-CONDIGTAL_UPLOAD_STORE_FILE=/caminho/absoluto/para/upload.keystore
+CONDIGTAL_UPLOAD_STORE_FILE=C:/caminho/absoluto/para/upload.keystore
 CONDIGTAL_UPLOAD_STORE_PASSWORD=sua-senha
 CONDIGTAL_UPLOAD_KEY_ALIAS=upload
 CONDIGTAL_UPLOAD_KEY_PASSWORD=sua-senha
 ```
 
-O `android/app/build.gradle` lê essas quatro propriedades. Sem elas, o build
-de release cai na `debug.keystore` — é o que mantém o CI funcionando sem
-precisar de segredo nenhum.
+Fora do repositório é melhor que dentro: não depende de ninguém acertar o
+`.gitignore` para a senha não vazar num commit.
+
+Alternativa, se preferir por projeto: `android/gradle.properties` funciona,
+mas ele **é versionado** — nesse caso confira o `.gitignore` antes.
+
+> Não use `gradle.properties.local`. O Gradle não carrega esse arquivo
+> automaticamente, e o resultado seria um build de release silenciosamente
+> assinado em debug.
+
+Passar por linha de comando também funciona, útil em CI:
+
+```bash
+./gradlew bundleRelease -PCONDIGTAL_UPLOAD_STORE_FILE=... -PCONDIGTAL_UPLOAD_STORE_PASSWORD=...
+```
+
+O `android/app/build.gradle` exige as **quatro** juntas: configuração parcial
+falha com mensagem dizendo qual está faltando, em vez de estourar um
+`MissingPropertyException` no meio da configuração do projeto. Ele também
+confere se o arquivo da keystore existe no caminho informado.
 
 Conferir se pegou:
 
@@ -108,8 +144,15 @@ Saída em:
 android/app/build/outputs/bundle/release/app-release.aab
 ```
 
-O APK que o CI publica como artefato continua servindo para teste interno e
-instalação direta — só não serve para a loja.
+Se a chave de upload não estiver configurada, o `bundleRelease` **falha de
+propósito**, com a instrução do que definir. É melhor descobrir aqui do que
+no upload do Play Console, depois de esperar o build inteiro.
+
+O `assembleRelease` continua funcionando sem chave nenhuma, caindo na
+`debug.keystore`. É o APK que o CI publica como artefato: serve para teste
+interno e instalação direta, só não serve para a loja. Essa diferença é
+intencional — forçar assinatura real no CI obrigaria a guardar a keystore
+nos secrets do repositório.
 
 Para testar o AAB num aparelho antes de subir, use a
 [bundletool](https://developer.android.com/tools/bundletool).
