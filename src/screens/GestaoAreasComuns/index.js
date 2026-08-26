@@ -37,7 +37,7 @@ export function GestaoAreasComuns() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [getCondominioIds]);
+  }, [getCondominioIds, user?.condominios]);
 
   useFocusEffect(
     useCallback(() => {
