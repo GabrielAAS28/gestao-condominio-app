@@ -36,7 +36,7 @@ export function CriarReserva() {
         setLoading(false);
       }
     })();
-  }, [getCondominioIds, user?.condominios]);
+  }, [getCondominioIds]);
 
   const handleSelect = (area) => {
     navigation.replace('FazerReserva', { areaId: area.areCod });
