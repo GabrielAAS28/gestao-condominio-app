@@ -92,9 +92,14 @@ jobs:
         run: |
           set -euo pipefail
           HERMESC="node_modules/react-native/sdks/hermesc/linux64-bin/hermesc"
+          # Falha de proposito se o binario sumir. Um upgrade do React Native
+          # pode mover esse caminho, e um check que se auto-pula em silencio
+          # daria a impressao de que o bundle continua sendo validado.
           if [ ! -x "$HERMESC" ]; then
-            echo "::warning::hermesc nao encontrado em $HERMESC — pulando."
-            exit 0
+            echo "::error::hermesc nao encontrado em $HERMESC."
+            echo "Se o caminho mudou apos um upgrade do RN, atualize este step."
+            ls -R node_modules/react-native/sdks/hermesc 2>/dev/null || true
+            exit 1
           fi
           "$HERMESC" -emit-binary -out build/bundle/index.android.hbc \
             build/bundle/index.android.bundle

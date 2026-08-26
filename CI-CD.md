@@ -90,9 +90,14 @@ rejeita APK assinado com a chave de debug.
 ## Orçamento de warnings do ESLint
 
 `npm run lint:ci` roda com `--max-warnings=79`, o número de warnings hoje
-(quase todos `react-native/no-inline-styles`). Isso trava a regressão: PR que
-adiciona warning novo falha. Conforme forem corrigidos, baixe o número no
-`package.json` até chegar a `0`.
+(quase todos `react-native/no-inline-styles`).
+
+É um **teto, não um ratchet automático**: o CI falha quando o total passa de
+79, mas não percebe se um PR corrige 5 warnings e introduz outros 5 — o total
+continua igual e o check passa. Para o número só cair, baixe o teto no
+`package.json` toda vez que fizer uma limpeza, até chegar a `0`.
+
+Erros de ESLint (severity 2) sempre quebram o build, independente do teto.
 
 ---
 
